@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+  api:
+    build: .
+    container_name: sales-assistant-api
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=sales_assistant;Username=postgres;Password=postgres
+      OpenAI__ApiKey: ${OPENAI_API_KEY}
+      OpenAI__Model: gpt-4o-mini
+      OpenAI__BaseUrl: https://api.openai.com/v1
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: sales-assistant-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sales_assistant
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
